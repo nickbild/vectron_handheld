@@ -3,7 +3,7 @@
 ; Reserved memory:
 ;
 ; $0000-$7EFF - RAM
-;			$0100-$01FF - 6502 stack
+; 		$0100-$01FF - 6502 stack
 ; $7FF0-$7FFF - 6522 VIA
 ; $8000-$FFFF - ROM
 ; 		$FFFA-$FFFB - NMI IRQ Vector
