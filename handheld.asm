@@ -12,7 +12,7 @@
 ;
 ; ORA Register:
 ; Bit: 7  | 6  | 5    | 4   | 3     | 2 | 1 | 0 |
-; 		 DC | CS | MOSI | CLK | RESET | 2 | 1 | 0 |
+;      DC | CS | MOSI | CLK | RESET | 2 | 1 | 0 |
 ;;;;
 
 		processor 6502
@@ -70,13 +70,13 @@ StartExe	ORG $8000
 	  ; writeData16(x);
 		lda #$00
 		jsr WriteByteToDisplay
-		lda #$32
+		lda #$00
 		jsr WriteByteToDisplay
 
 	  ; writeData16(x);
 		lda #$00
 		jsr WriteByteToDisplay
-		lda #$3F
+		lda #$00
 		jsr WriteByteToDisplay
 
 	  ; // Row address set.
@@ -87,12 +87,12 @@ StartExe	ORG $8000
 	  ; writeData16(y);
 		lda #$00
 		jsr WriteByteToDisplay
-		lda #$32
+		lda #$00
 		jsr WriteByteToDisplay
 	  ; writeData16(y);
 		lda #$00
 		jsr WriteByteToDisplay
-		lda #$35
+		lda #$00
 		jsr WriteByteToDisplay
 
 	  ; // RAM write.
@@ -578,16 +578,15 @@ WriteByteToDisplay
 		lda #$20 ; MOSI low.
 		.byte #$1C ; trb - clear bit
 		.word #$7FF1
-
-		lda #$10 ; Clock high.
-		.byte #$0C ; tsb - set bit
-		.word #$7FF1
 		jmp Bit7Done
 Bit7High
-		lda #$30 ; MOSI and clock high.
+		lda #$20 ; MOSI high.
 		.byte #$0C ; tsb - set bit
 		.word #$7FF1
 Bit7Done
+		lda #$10 ; Clock high.
+		.byte #$0C ; tsb - set bit
+		.word #$7FF1
 		lda #$10 ; Clock low.
 		.byte #$1C ; trb - clear bit
 		.word #$7FF1
@@ -601,16 +600,15 @@ Bit7Done
 		lda #$20 ; MOSI low.
 		.byte #$1C ; trb - clear bit
 		.word #$7FF1
-
-		lda #$10 ; Clock high.
-		.byte #$0C ; tsb - set bit
-		.word #$7FF1
 		jmp Bit6Done
 Bit6High
-		lda #$30 ; MOSI and clock high.
+		lda #$20 ; MOSI high.
 		.byte #$0C ; tsb - set bit
 		.word #$7FF1
 Bit6Done
+		lda #$10 ; Clock high.
+		.byte #$0C ; tsb - set bit
+		.word #$7FF1
 		lda #$10 ; Clock low.
 		.byte #$1C ; trb - clear bit
 		.word #$7FF1
@@ -624,16 +622,15 @@ Bit6Done
 		lda #$20 ; MOSI low.
 		.byte #$1C ; trb - clear bit
 		.word #$7FF1
-
-		lda #$10 ; Clock high.
-		.byte #$0C ; tsb - set bit
-		.word #$7FF1
 		jmp Bit5Done
 Bit5High
-		lda #$30 ; MOSI and clock high.
+		lda #$20 ; MOSI high.
 		.byte #$0C ; tsb - set bit
 		.word #$7FF1
 Bit5Done
+		lda #$10 ; Clock high.
+		.byte #$0C ; tsb - set bit
+		.word #$7FF1
 		lda #$10 ; Clock low.
 		.byte #$1C ; trb - clear bit
 		.word #$7FF1
@@ -647,16 +644,15 @@ Bit5Done
 		lda #$20 ; MOSI low.
 		.byte #$1C ; trb - clear bit
 		.word #$7FF1
-
-		lda #$10 ; Clock high.
-		.byte #$0C ; tsb - set bit
-		.word #$7FF1
 		jmp Bit4Done
 Bit4High
-		lda #$30 ; MOSI and clock high.
+		lda #$20 ; MOSI high.
 		.byte #$0C ; tsb - set bit
 		.word #$7FF1
 Bit4Done
+		lda #$10 ; Clock high.
+		.byte #$0C ; tsb - set bit
+		.word #$7FF1
 		lda #$10 ; Clock low.
 		.byte #$1C ; trb - clear bit
 		.word #$7FF1
@@ -670,16 +666,15 @@ Bit4Done
 		lda #$20 ; MOSI low.
 		.byte #$1C ; trb - clear bit
 		.word #$7FF1
-
-		lda #$10 ; Clock high.
-		.byte #$0C ; tsb - set bit
-		.word #$7FF1
 		jmp Bit3Done
 Bit3High
-		lda #$30 ; MOSI and clock high.
+		lda #$20 ; MOSI high.
 		.byte #$0C ; tsb - set bit
 		.word #$7FF1
 Bit3Done
+		lda #$10 ; Clock high.
+		.byte #$0C ; tsb - set bit
+		.word #$7FF1
 		lda #$10 ; Clock low.
 		.byte #$1C ; trb - clear bit
 		.word #$7FF1
@@ -693,16 +688,15 @@ Bit3Done
 		lda #$20 ; MOSI low.
 		.byte #$1C ; trb - clear bit
 		.word #$7FF1
-
-		lda #$10 ; Clock high.
-		.byte #$0C ; tsb - set bit
-		.word #$7FF1
 		jmp Bit2Done
 Bit2High
-		lda #$30 ; MOSI and clock high.
+		lda #$20 ; MOSI high.
 		.byte #$0C ; tsb - set bit
 		.word #$7FF1
 Bit2Done
+		lda #$10 ; Clock high.
+		.byte #$0C ; tsb - set bit
+		.word #$7FF1
 		lda #$10 ; Clock low.
 		.byte #$1C ; trb - clear bit
 		.word #$7FF1
@@ -716,16 +710,15 @@ Bit2Done
 		lda #$20 ; MOSI low.
 		.byte #$1C ; trb - clear bit
 		.word #$7FF1
-
-		lda #$10 ; Clock high.
-		.byte #$0C ; tsb - set bit
-		.word #$7FF1
 		jmp Bit1Done
 Bit1High
-		lda #$30 ; MOSI and clock high.
+		lda #$20 ; MOSI high.
 		.byte #$0C ; tsb - set bit
 		.word #$7FF1
 Bit1Done
+		lda #$10 ; Clock high.
+		.byte #$0C ; tsb - set bit
+		.word #$7FF1
 		lda #$10 ; Clock low.
 		.byte #$1C ; trb - clear bit
 		.word #$7FF1
@@ -739,16 +732,15 @@ Bit1Done
 		lda #$20 ; MOSI low.
 		.byte #$1C ; trb - clear bit
 		.word #$7FF1
-
-		lda #$10 ; Clock high.
-		.byte #$0C ; tsb - set bit
-		.word #$7FF1
 		jmp Bit0Done
 Bit0High
-		lda #$30 ; MOSI and clock high.
+		lda #$20 ; MOSI high.
 		.byte #$0C ; tsb - set bit
 		.word #$7FF1
 Bit0Done
+		lda #$10 ; Clock high.
+		.byte #$0C ; tsb - set bit
+		.word #$7FF1
 		lda #$10 ; Clock low.
 		.byte #$1C ; trb - clear bit
 		.word #$7FF1
