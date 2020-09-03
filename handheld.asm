@@ -57,6 +57,11 @@ StartExe	ORG $8000
 
 
 
+		; Paint screen white.
+		ldx #$7F
+XLoop	ldy #$9F
+YLoop
+
 		; digitalWrite(cs, LOW);
 		lda #$40	; CS low.
 		.byte #$1C ; trb - clear bit
@@ -70,13 +75,13 @@ StartExe	ORG $8000
 	  ; writeData16(x);
 		lda #$00
 		jsr WriteByteToDisplay
-		lda #$00
+		txa
 		jsr WriteByteToDisplay
 
 	  ; writeData16(x);
 		lda #$00
 		jsr WriteByteToDisplay
-		lda #$00
+		txa
 		jsr WriteByteToDisplay
 
 	  ; // Row address set.
@@ -87,12 +92,12 @@ StartExe	ORG $8000
 	  ; writeData16(y);
 		lda #$00
 		jsr WriteByteToDisplay
-		lda #$00
+		tya
 		jsr WriteByteToDisplay
 	  ; writeData16(y);
 		lda #$00
 		jsr WriteByteToDisplay
-		lda #$00
+		tya
 		jsr WriteByteToDisplay
 
 	  ; // RAM write.
@@ -101,15 +106,21 @@ StartExe	ORG $8000
 		jsr WriteCommandToDisplay
 
 	  ; writeData16(color);
-		lda #$00
+		lda #$FF
 		jsr WriteByteToDisplay
-		lda #$00
+		lda #$FF
 		jsr WriteByteToDisplay
 
 	  ; digitalWrite(cs, HIGH);
 		lda #$40	; CS high.
 		.byte #$0C ; tsb - set bit
 		.word #$7FF1
+
+		dey
+		bne YLoop
+		dex
+		bne XLoop
+
 
 
 
@@ -553,6 +564,9 @@ InitDisplay
 
 
 WriteCommandToDisplay
+			.byte #$DA ; phx
+			.byte #$5A ; phy
+
 			tax
 
 			lda #$80	; DC low.
@@ -566,10 +580,16 @@ WriteCommandToDisplay
 			.byte #$0C ; tsb - set bit
 			.word #$7FF1
 
+			.byte #$7A ; ply
+			.byte #$FA ; plx
+
 			rts
 
 
 WriteByteToDisplay
+		.byte #$DA ; phx
+		.byte #$5A ; phy
+
 		;;; Bit 7
 		asl	; bit 7 to carry
 		tax	; save accumulator
@@ -744,6 +764,9 @@ Bit0Done
 		lda #$10 ; Clock low.
 		.byte #$1C ; trb - clear bit
 		.word #$7FF1
+
+		.byte #$7A ; ply
+		.byte #$FA ; plx
 
 		rts
 
