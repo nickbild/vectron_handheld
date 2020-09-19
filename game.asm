@@ -17,6 +17,15 @@
 
 		processor 6502
 
+; Named variables in RAM.
+		ORG $0000
+
+Paddle1X
+		.byte #$00
+Paddle1Color
+		.byte #$00
+
+
 ; Start at beginning of ROM.
 StartExe	ORG $8000
 		sei
@@ -57,6 +66,13 @@ StartExe	ORG $8000
 		jsr DrawBackground
 		jsr DrawPlayfield
 
+		; Set paddle 1 initial location and draw.
+		lda #$20
+		sta Paddle1X
+		lda #$FF
+		sta Paddle1Color
+		jsr DrawPaddle1
+
 		; Clear interrupts in IFR.
 		lda #$FF
 		sta $7FFD
@@ -89,24 +105,46 @@ ViaIsr
 		bmi InterruptCA2
 		jmp InterruptDone
 
-InterruptCB1
+InterruptCB1 ; Up
 
-		jsr CB1Pixel
+		; Erase paddle.
+		lda #$00
+		sta Paddle1Color
+		jsr DrawPaddle1
+
+		; Move paddle and draw.
+		lda Paddle1X
+		sbc #$01
+		sta Paddle1X
+		lda #$FF
+		sta Paddle1Color
+		jsr DrawPaddle1
 
 		jmp InterruptDone
 InterruptCB2
 
-		jsr CB2Pixel
+		;jsr CB2Pixel
 
 		jmp InterruptDone
 InterruptCA1
 
-		jsr CA1Pixel
+		;jsr CA1Pixel
 
 		jmp InterruptDone
-InterruptCA2
+InterruptCA2 ; Down
 
-		jsr CA2Pixel
+		; Erase paddle.
+		lda #$00
+		sta Paddle1Color
+		jsr DrawPaddle1
+
+		; Move paddle and draw.
+		lda Paddle1X
+		adc #$01
+		sta Paddle1X
+		lda #$FF
+		sta Paddle1Color
+		jsr DrawPaddle1
 
 		jmp InterruptDone
 
@@ -708,6 +746,75 @@ YLoopNet
 		rts
 
 
+DrawPaddle1
+		; digitalWrite(cs, LOW);
+		lda #$40	; CS low.
+		.byte #$1C ; trb - clear bit
+		.word #$7FF1
+
+	  ; // Column address set.
+	  ; writeCommand(0x2A);
+		lda #$2A
+		jsr WriteCommandToDisplay
+
+	  ; writeData16(x);
+		lda #$00
+		jsr WriteByteToDisplay
+		lda Paddle1X
+		jsr WriteByteToDisplay
+
+	  ; writeData16(x);
+		lda #$00
+		jsr WriteByteToDisplay
+		lda Paddle1X
+		clc
+		adc #$13
+		jsr WriteByteToDisplay
+
+	  ; // Row address set.
+	  ; writeCommand(0x2B);
+		lda #$2B
+		jsr WriteCommandToDisplay
+
+	  ; writeData16(y);
+		lda #$00
+		jsr WriteByteToDisplay
+		lda #$9C
+		jsr WriteByteToDisplay
+	  ; writeData16(y);
+		lda #$00
+		jsr WriteByteToDisplay
+		lda #$9E
+		jsr WriteByteToDisplay
+
+	  ; // RAM write.
+	  ; writeCommand(0x2C);
+		lda #$2C
+		jsr WriteCommandToDisplay
+
+		; writeData16(color);
+		lda Paddle1Color ; color
+
+		ldx #$03
+XLoopPaddle1
+		ldy #$14
+YLoopPaddle1
+		jsr WriteByteToDisplay
+		jsr WriteByteToDisplay
+
+		dey
+		bne YLoopPaddle1
+		dex
+		bne XLoopPaddle1
+
+	  ; digitalWrite(cs, HIGH);
+		lda #$40	; CS high.
+		.byte #$0C ; tsb - set bit
+		.word #$7FF1
+
+		rts
+
+
 WriteCommandToDisplay
 			pha
 			.byte #$DA ; phx
@@ -926,238 +1033,6 @@ DelayLoop2	dey
 		bne DelayLoop2
 		dex
 		bne DelayLoop1
-
-		rts
-
-
-CB1Pixel
-		; digitalWrite(cs, LOW);
-		lda #$40	; CS low.
-		.byte #$1C ; trb - clear bit
-		.word #$7FF1
-
-	  ; // Column address set.
-	  ; writeCommand(0x2A);
-		lda #$2A
-		jsr WriteCommandToDisplay
-
-	  ; writeData16(x);
-		lda #$00
-		jsr WriteByteToDisplay
-		lda #$1E
-		jsr WriteByteToDisplay
-
-	  ; writeData16(x);
-		lda #$00
-		jsr WriteByteToDisplay
-		lda #$1E
-		jsr WriteByteToDisplay
-
-	  ; // Row address set.
-	  ; writeCommand(0x2B);
-		lda #$2B
-		jsr WriteCommandToDisplay
-
-	  ; writeData16(y);
-		lda #$00
-		jsr WriteByteToDisplay
-		lda #$1E
-		jsr WriteByteToDisplay
-	  ; writeData16(y);
-		lda #$00
-		jsr WriteByteToDisplay
-		lda #$1E
-		jsr WriteByteToDisplay
-
-	  ; // RAM write.
-	  ; writeCommand(0x2C);
-		lda #$2C
-		jsr WriteCommandToDisplay
-
-	  ; writeData16(color);
-		lda #$FF
-		jsr WriteByteToDisplay
-		lda #$FF
-		jsr WriteByteToDisplay
-
-	  ; digitalWrite(cs, HIGH);
-		lda #$40	; CS high.
-		.byte #$0C ; tsb - set bit
-		.word #$7FF1
-
-		rts
-
-
-CB2Pixel
-		; digitalWrite(cs, LOW);
-		lda #$40	; CS low.
-		.byte #$1C ; trb - clear bit
-		.word #$7FF1
-
-	  ; // Column address set.
-	  ; writeCommand(0x2A);
-		lda #$2A
-		jsr WriteCommandToDisplay
-
-	  ; writeData16(x);
-		lda #$00
-		jsr WriteByteToDisplay
-		lda #$32
-		jsr WriteByteToDisplay
-
-	  ; writeData16(x);
-		lda #$00
-		jsr WriteByteToDisplay
-		lda #$32
-		jsr WriteByteToDisplay
-
-	  ; // Row address set.
-	  ; writeCommand(0x2B);
-		lda #$2B
-		jsr WriteCommandToDisplay
-
-	  ; writeData16(y);
-		lda #$00
-		jsr WriteByteToDisplay
-		lda #$32
-		jsr WriteByteToDisplay
-	  ; writeData16(y);
-		lda #$00
-		jsr WriteByteToDisplay
-		lda #$32
-		jsr WriteByteToDisplay
-
-	  ; // RAM write.
-	  ; writeCommand(0x2C);
-		lda #$2C
-		jsr WriteCommandToDisplay
-
-	  ; writeData16(color);
-		lda #$FF
-		jsr WriteByteToDisplay
-		lda #$FF
-		jsr WriteByteToDisplay
-
-	  ; digitalWrite(cs, HIGH);
-		lda #$40	; CS high.
-		.byte #$0C ; tsb - set bit
-		.word #$7FF1
-
-		rts
-
-
-CA1Pixel
-		; digitalWrite(cs, LOW);
-		lda #$40	; CS low.
-		.byte #$1C ; trb - clear bit
-		.word #$7FF1
-
-	  ; // Column address set.
-	  ; writeCommand(0x2A);
-		lda #$2A
-		jsr WriteCommandToDisplay
-
-	  ; writeData16(x);
-		lda #$00
-		jsr WriteByteToDisplay
-		lda #$46
-		jsr WriteByteToDisplay
-
-	  ; writeData16(x);
-		lda #$00
-		jsr WriteByteToDisplay
-		lda #$46
-		jsr WriteByteToDisplay
-
-	  ; // Row address set.
-	  ; writeCommand(0x2B);
-		lda #$2B
-		jsr WriteCommandToDisplay
-
-	  ; writeData16(y);
-		lda #$00
-		jsr WriteByteToDisplay
-		lda #$46
-		jsr WriteByteToDisplay
-	  ; writeData16(y);
-		lda #$00
-		jsr WriteByteToDisplay
-		lda #$46
-		jsr WriteByteToDisplay
-
-	  ; // RAM write.
-	  ; writeCommand(0x2C);
-		lda #$2C
-		jsr WriteCommandToDisplay
-
-	  ; writeData16(color);
-		lda #$FF
-		jsr WriteByteToDisplay
-		lda #$FF
-		jsr WriteByteToDisplay
-
-	  ; digitalWrite(cs, HIGH);
-		lda #$40	; CS high.
-		.byte #$0C ; tsb - set bit
-		.word #$7FF1
-
-		rts
-
-
-CA2Pixel
-		; digitalWrite(cs, LOW);
-		lda #$40	; CS low.
-		.byte #$1C ; trb - clear bit
-		.word #$7FF1
-
-	  ; // Column address set.
-	  ; writeCommand(0x2A);
-		lda #$2A
-		jsr WriteCommandToDisplay
-
-	  ; writeData16(x);
-		lda #$00
-		jsr WriteByteToDisplay
-		lda #$5A
-		jsr WriteByteToDisplay
-
-	  ; writeData16(x);
-		lda #$00
-		jsr WriteByteToDisplay
-		lda #$5A
-		jsr WriteByteToDisplay
-
-	  ; // Row address set.
-	  ; writeCommand(0x2B);
-		lda #$2B
-		jsr WriteCommandToDisplay
-
-	  ; writeData16(y);
-		lda #$00
-		jsr WriteByteToDisplay
-		lda #$5A
-		jsr WriteByteToDisplay
-	  ; writeData16(y);
-		lda #$00
-		jsr WriteByteToDisplay
-		lda #$5A
-		jsr WriteByteToDisplay
-
-	  ; // RAM write.
-	  ; writeCommand(0x2C);
-		lda #$2C
-		jsr WriteCommandToDisplay
-
-	  ; writeData16(color);
-		lda #$FF
-		jsr WriteByteToDisplay
-		lda #$FF
-		jsr WriteByteToDisplay
-
-	  ; digitalWrite(cs, HIGH);
-		lda #$40	; CS high.
-		.byte #$0C ; tsb - set bit
-		.word #$7FF1
 
 		rts
 
