@@ -24,6 +24,16 @@ Paddle1X
 		.byte #$00
 Paddle1Color
 		.byte #$00
+Paddle2X
+		.byte #$00
+Paddle2Color
+		.byte #$00
+BallX
+		.byte #$00
+BallY
+		.byte #$00
+BallColor
+		.byte #$00
 
 
 ; Start at beginning of ROM.
@@ -67,11 +77,27 @@ StartExe	ORG $8000
 		jsr DrawPlayfield
 
 		; Set paddle 1 initial location and draw.
-		lda #$20
+		lda #$23
 		sta Paddle1X
 		lda #$FF
 		sta Paddle1Color
 		jsr DrawPaddle1
+
+		; Set paddle 2 initial location and draw.
+		lda #$23
+		sta Paddle2X
+		lda #$C0
+		sta Paddle2Color
+		jsr DrawPaddle2
+
+		; Set ball initial location and draw.
+		lda #$60
+		sta BallX
+		lda #$60
+		sta BallY
+		lda #$FF
+		sta BallColor
+		jsr DrawBall
 
 		; Clear interrupts in IFR.
 		lda #$FF
@@ -114,8 +140,15 @@ InterruptCB1 ; Up
 
 		; Move paddle and draw.
 		lda Paddle1X
-		sbc #$01
+		sec
+		sbc #$05
+
+		cmp #$00
+		beq SkipUp
+
 		sta Paddle1X
+
+SkipUp
 		lda #$FF
 		sta Paddle1Color
 		jsr DrawPaddle1
@@ -140,8 +173,16 @@ InterruptCA2 ; Down
 
 		; Move paddle and draw.
 		lda Paddle1X
-		adc #$01
+		clc
+		adc #$05
+
+		; Branch if A >= 107
+		cmp #$6B
+		bcs SkipDown
+
 		sta Paddle1X
+
+SkipDown
 		lda #$FF
 		sta Paddle1Color
 		jsr DrawPaddle1
@@ -806,6 +847,142 @@ YLoopPaddle1
 		bne YLoopPaddle1
 		dex
 		bne XLoopPaddle1
+
+	  ; digitalWrite(cs, HIGH);
+		lda #$40	; CS high.
+		.byte #$0C ; tsb - set bit
+		.word #$7FF1
+
+		rts
+
+
+DrawPaddle2
+		; digitalWrite(cs, LOW);
+		lda #$40	; CS low.
+		.byte #$1C ; trb - clear bit
+		.word #$7FF1
+
+	  ; // Column address set.
+	  ; writeCommand(0x2A);
+		lda #$2A
+		jsr WriteCommandToDisplay
+
+	  ; writeData16(x);
+		lda #$00
+		jsr WriteByteToDisplay
+		lda Paddle2X
+		jsr WriteByteToDisplay
+
+	  ; writeData16(x);
+		lda #$00
+		jsr WriteByteToDisplay
+		lda Paddle2X
+		clc
+		adc #$13
+		jsr WriteByteToDisplay
+
+	  ; // Row address set.
+	  ; writeCommand(0x2B);
+		lda #$2B
+		jsr WriteCommandToDisplay
+
+	  ; writeData16(y);
+		lda #$00
+		jsr WriteByteToDisplay
+		lda #$00
+		jsr WriteByteToDisplay
+	  ; writeData16(y);
+		lda #$00
+		jsr WriteByteToDisplay
+		lda #$02
+		jsr WriteByteToDisplay
+
+	  ; // RAM write.
+	  ; writeCommand(0x2C);
+		lda #$2C
+		jsr WriteCommandToDisplay
+
+		; writeData16(color);
+		lda Paddle2Color ; color
+
+		ldx #$03
+XLoopPaddle2
+		ldy #$14
+YLoopPaddle2
+		jsr WriteByteToDisplay
+		jsr WriteByteToDisplay
+
+		dey
+		bne YLoopPaddle2
+		dex
+		bne XLoopPaddle2
+
+	  ; digitalWrite(cs, HIGH);
+		lda #$40	; CS high.
+		.byte #$0C ; tsb - set bit
+		.word #$7FF1
+
+		rts
+
+
+DrawBall
+		; digitalWrite(cs, LOW);
+		lda #$40	; CS low.
+		.byte #$1C ; trb - clear bit
+		.word #$7FF1
+
+	  ; // Column address set.
+	  ; writeCommand(0x2A);
+		lda #$2A
+		jsr WriteCommandToDisplay
+
+	  ; writeData16(x);
+		lda #$00
+		jsr WriteByteToDisplay
+		lda BallX
+		jsr WriteByteToDisplay
+
+	  ; writeData16(x);
+		lda #$00
+		jsr WriteByteToDisplay
+		lda BallX
+		clc
+		adc #$03
+		jsr WriteByteToDisplay
+
+	  ; // Row address set.
+	  ; writeCommand(0x2B);
+		lda #$2B
+		jsr WriteCommandToDisplay
+
+	  ; writeData16(y);
+		lda #$00
+		jsr WriteByteToDisplay
+		lda BallY
+		jsr WriteByteToDisplay
+	  ; writeData16(y);
+		lda #$00
+		jsr WriteByteToDisplay
+		lda BallY
+		clc
+		adc #$03
+		jsr WriteByteToDisplay
+
+	  ; // RAM write.
+	  ; writeCommand(0x2C);
+		lda #$2C
+		jsr WriteCommandToDisplay
+
+		; writeData16(color);
+		lda BallColor ; color
+
+		ldy #$10
+YLoopBall
+		jsr WriteByteToDisplay
+		jsr WriteByteToDisplay
+
+		dey
+		bne YLoopBall
 
 	  ; digitalWrite(cs, HIGH);
 		lda #$40	; CS high.
