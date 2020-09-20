@@ -30,7 +30,13 @@ Paddle2Color
 		.byte #$00
 BallX
 		.byte #$00
+BallXDir					; 0 = up; 1 = down
+		.byte #$00
 BallY
+		.byte #$00
+BallYDir					; 0 = left; 1 = right
+		.byte #$00
+BallYSpeed
 		.byte #$00
 BallColor
 		.byte #$00
@@ -97,6 +103,12 @@ StartExe	ORG $8000
 		sta BallY
 		lda #$FF
 		sta BallColor
+		lda #$00
+		sta BallXDir
+		lda #$01
+		sta BallYSpeed
+		lda #$00
+		sta BallYDir
 		jsr DrawBall
 
 		; Clear interrupts in IFR.
@@ -107,6 +119,19 @@ StartExe	ORG $8000
 
 
 MainLoop
+		jsr Delay
+
+		; Erase ball.
+		lda #$00
+		sta BallColor
+		jsr DrawBall
+
+		; Move and redraw ball.
+		lda #$FF
+		sta BallColor
+		jsr MoveBall
+		jsr DrawBall
+
 		jmp MainLoop
 
 
@@ -721,6 +746,8 @@ BGLoop2
 
 
 DrawPlayfield
+		sei
+
 		; digitalWrite(cs, LOW);
 		lda #$40	; CS low.
 		.byte #$1C ; trb - clear bit
@@ -784,6 +811,7 @@ YLoopNet
 		.byte #$0C ; tsb - set bit
 		.word #$7FF1
 
+		cli
 		rts
 
 
@@ -926,6 +954,8 @@ YLoopPaddle2
 
 
 DrawBall
+		sei
+
 		; digitalWrite(cs, LOW);
 		lda #$40	; CS low.
 		.byte #$1C ; trb - clear bit
@@ -989,32 +1019,68 @@ YLoopBall
 		.byte #$0C ; tsb - set bit
 		.word #$7FF1
 
+		cli
+		rts
+
+
+MoveBall
+		; X movement
+		lda BallXDir
+		cmp #$00
+		bne BallDirDown
+		; Move ball up
+		dec BallX
+		jmp BallXDone
+BallDirDown
+		; Move ball down
+		inc BallX
+BallXDone
+
+		; Y movement
+		lda BallYDir
+		cmp #$00
+		bne BallDirRight
+		; Move ball left
+		lda BallY
+		sec
+		sbc BallYSpeed
+		sta BallY
+
+		jmp BallYDone
+BallDirRight
+		; Move ball right
+		lda BallY
+		clc
+		adc BallYSpeed
+		sta BallY
+BallYDone
+
 		rts
 
 
 WriteCommandToDisplay
-			pha
-			.byte #$DA ; phx
-			.byte #$5A ; phy
+		pha
+		.byte #$DA ; phx
+		.byte #$5A ; phy
 
-			tax
+		tax
 
-			lda #$80	; DC low.
-			.byte #$1C ; trb - clear bit
-			.word #$7FF1
+		lda #$80	; DC low.
+		.byte #$1C ; trb - clear bit
+		.word #$7FF1
 
-			txa
-			jsr WriteByteToDisplay
+		txa
+		jsr WriteByteToDisplay
 
-			lda #$80	; DC high
-			.byte #$0C ; tsb - set bit
-			.word #$7FF1
+		lda #$80	; DC high
+		.byte #$0C ; tsb - set bit
+		.word #$7FF1
 
-			.byte #$7A ; ply
-			.byte #$FA ; plx
-			pla
+		.byte #$7A ; ply
+		.byte #$FA ; plx
+		pla
 
-			rts
+		rts
 
 
 WriteByteToDisplay
