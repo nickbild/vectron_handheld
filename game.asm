@@ -1030,10 +1030,30 @@ MoveBall
 		bne BallDirDown
 		; Move ball up
 		dec BallX
+
+		; Check for upper screen boundary.
+		lda BallX
+		cmp #$00
+		bne NotAtUpperLimit
+		; At upper screen limit.
+		lda #$01 ; Reverse direction.
+		sta BallXDir
+NotAtUpperLimit
+
 		jmp BallXDone
 BallDirDown
 		; Move ball down
 		inc BallX
+
+		; Check for lower screen boundary.
+		lda BallX
+		cmp #$7B
+		bcc NotAtLowerLimit
+		; At lower screen limit.
+		lda #$00 ; Reverse direction.
+		sta BallXDir
+
+NotAtLowerLimit
 BallXDone
 
 		; Y movement
@@ -1046,6 +1066,15 @@ BallXDone
 		sbc BallYSpeed
 		sta BallY
 
+		; Check for left edge of screen.
+		lda BallY
+		cmp #$04
+		bcs NotAtLeftLimit
+		; At left edge.
+		lda #$01	; Reverse direction.
+		sta BallYDir
+
+NotAtLeftLimit
 		jmp BallYDone
 BallDirRight
 		; Move ball right
@@ -1053,6 +1082,16 @@ BallDirRight
 		clc
 		adc BallYSpeed
 		sta BallY
+
+		; Check for right edge of screen.
+		lda BallY
+		cmp #$97
+		bcc NotAtRightLimit
+		; At right edge.
+		lda #$00	; Reverse direction.
+		sta BallYDir
+
+NotAtRightLimit
 BallYDone
 
 		rts
@@ -1276,6 +1315,16 @@ DelayLoop2	dey
 		bne DelayLoop2
 		dex
 		bne DelayLoop1
+
+		rts
+
+
+DelayShort		ldx #$7F
+DelayShortLoop1	ldy #$FF
+DelayShortLoop2	dey
+		bne DelayShortLoop2
+		dex
+		bne DelayShortLoop1
 
 		rts
 
