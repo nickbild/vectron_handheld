@@ -126,6 +126,17 @@ MainLoop
 		sta BallColor
 		jsr DrawBall
 
+		; Redraw playfield if ball overwrote it.
+		lda BallY
+		cmp #$4A
+		bcc NoRedrawPlayfield ; if BallY < $4E
+		lda BallY
+		cmp #$55
+		bcs NoRedrawPlayfield ; if BallY >= $51
+
+		jsr DrawPlayfield
+NoRedrawPlayfield
+
 		; Move and redraw ball.
 		lda #$FF
 		sta BallColor
@@ -168,8 +179,8 @@ InterruptCB1 ; Up
 		sec
 		sbc #$05
 
-		cmp #$00
-		beq SkipUp
+		cmp #$FA
+		bcs SkipUp
 
 		sta Paddle1X
 
@@ -181,12 +192,12 @@ SkipUp
 		jmp InterruptDone
 InterruptCB2
 
-		;jsr CB2Pixel
+		; Unused.
 
 		jmp InterruptDone
 InterruptCA1
 
-		;jsr CA1Pixel
+		; Unused.
 
 		jmp InterruptDone
 InterruptCA2 ; Down
@@ -231,59 +242,7 @@ NMIIsr
 		.byte #$DA ; phx
 		.byte #$5A ; phy
 
-		; digitalWrite(cs, LOW);
-		lda #$40	; CS low.
-		.byte #$1C ; trb - clear bit
-		.word #$7FF1
-
-	  ; // Column address set.
-	  ; writeCommand(0x2A);
-		lda #$2A
-		jsr WriteCommandToDisplay
-
-	  ; writeData16(x);
-		lda #$00
-		jsr WriteByteToDisplay
-		lda #$14
-		jsr WriteByteToDisplay
-
-	  ; writeData16(x);
-		lda #$00
-		jsr WriteByteToDisplay
-		lda #$14
-		jsr WriteByteToDisplay
-
-	  ; // Row address set.
-	  ; writeCommand(0x2B);
-		lda #$2B
-		jsr WriteCommandToDisplay
-
-	  ; writeData16(y);
-		lda #$00
-		jsr WriteByteToDisplay
-		lda #$0A
-		jsr WriteByteToDisplay
-	  ; writeData16(y);
-		lda #$00
-		jsr WriteByteToDisplay
-		lda #$0A
-		jsr WriteByteToDisplay
-
-	  ; // RAM write.
-	  ; writeCommand(0x2C);
-		lda #$2C
-		jsr WriteCommandToDisplay
-
-	  ; writeData16(color);
-		lda #$FF
-		jsr WriteByteToDisplay
-		lda #$FF
-		jsr WriteByteToDisplay
-
-	  ; digitalWrite(cs, HIGH);
-		lda #$40	; CS high.
-		.byte #$0C ; tsb - set bit
-		.word #$7FF1
+		; Unused.
 
 		.byte #$7A ; ply
 		.byte #$FA ; plx
