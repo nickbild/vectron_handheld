@@ -1074,6 +1074,25 @@ BallXDone
 		lda #$01	; Reverse direction.
 		sta BallYDir
 
+		; Is ball touching paddle2?
+		lda BallX
+		cmp Paddle2X
+		bcc NotTouchingPaddle2 ; if BallX < Paddle2X
+
+		lda Paddle2X
+		clc
+		adc #$13
+		cmp BallX
+		bcc NotTouchingPaddle2 ; if Paddle2X < BallX
+		; Ball is touching paddle.
+		jmp IsTouchingPaddle2
+
+NotTouchingPaddle2
+		; Ball not touching paddle (a miss).
+		jsr PointScored
+
+IsTouchingPaddle2
+
 NotAtLeftLimit
 		jmp BallYDone
 BallDirRight
@@ -1091,8 +1110,56 @@ BallDirRight
 		lda #$00	; Reverse direction.
 		sta BallYDir
 
+		; Is ball touching paddle1?
+		lda BallX
+		cmp Paddle1X
+		bcc NotTouchingPaddle1 ; if BallX < Paddle1X
+
+		lda Paddle1X
+		clc
+		adc #$13
+		cmp BallX
+		bcc NotTouchingPaddle1 ; if Paddle1X < BallX
+		; Ball is touching paddle.
+		jmp IsTouchingPaddle1
+
+NotTouchingPaddle1
+		; Ball not touching paddle (a miss).
+		jsr PointScored
+
+IsTouchingPaddle1
+
 NotAtRightLimit
 BallYDone
+
+		rts
+
+
+PointScored
+		ldx #$0A
+PointScoredLoop
+		lda #$40
+		sta BallColor
+		jsr DrawBall
+
+		jsr Delay
+		jsr Delay
+		jsr Delay
+		jsr Delay
+		jsr Delay
+
+		lda #$FF
+		sta BallColor
+		jsr DrawBall
+
+		jsr Delay
+		jsr Delay
+		jsr Delay
+		jsr Delay
+		jsr Delay
+
+		dex
+		bne PointScoredLoop
 
 		rts
 
@@ -1309,22 +1376,36 @@ Bit0Done
 		rts
 
 
-Delay		ldx #$FF
+Delay
+		.byte #$DA ; phx
+		.byte #$5A ; phy
+
+		ldx #$FF
 DelayLoop1	ldy #$FF
 DelayLoop2	dey
 		bne DelayLoop2
 		dex
 		bne DelayLoop1
 
+		.byte #$7A ; ply
+		.byte #$FA ; plx
+
 		rts
 
 
-DelayShort		ldx #$7F
+DelayShort
+		.byte #$DA ; phx
+		.byte #$5A ; phy
+
+		ldx #$7F
 DelayShortLoop1	ldy #$FF
 DelayShortLoop2	dey
 		bne DelayShortLoop2
 		dex
 		bne DelayShortLoop1
+
+		.byte #$7A ; ply
+		.byte #$FA ; plx
 
 		rts
 
