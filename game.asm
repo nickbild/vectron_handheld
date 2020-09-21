@@ -129,10 +129,10 @@ MainLoop
 		; Redraw playfield if ball overwrote it.
 		lda BallY
 		cmp #$4A
-		bcc NoRedrawPlayfield ; if BallY < $4E
+		bcc NoRedrawPlayfield ; if BallY < $4A
 		lda BallY
 		cmp #$55
-		bcs NoRedrawPlayfield ; if BallY >= $51
+		bcs NoRedrawPlayfield ; if BallY >= $55
 
 		jsr DrawPlayfield
 NoRedrawPlayfield
