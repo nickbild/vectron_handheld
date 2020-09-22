@@ -143,6 +143,57 @@ NoRedrawPlayfield
 		jsr MoveBall
 		jsr DrawBall
 
+		; Computer controlled player AI.
+		lda BallX
+		cmp Paddle2X
+		bcc MovePaddle2Up ; if BallX < Paddle2X
+
+		lda Paddle2X
+		clc
+		adc #$13
+		cmp BallX
+		bcc MovePaddle2Down ; else if Paddle2X < BallX
+
+		jmp DontMovePaddle2 ; else
+
+MovePaddle2Up
+		; Erase paddle.
+		lda #$00
+		sta Paddle2Color
+		jsr DrawPaddle2
+
+		; Move paddle.
+		lda Paddle2X
+		sec
+		sbc #$05
+		sta Paddle2X
+
+		; Draw paddle.
+		lda #$C0
+		sta Paddle2Color
+		jsr DrawPaddle2
+
+		jmp DontMovePaddle2
+
+MovePaddle2Down
+		; Erase paddle.
+		lda #$00
+		sta Paddle2Color
+		jsr DrawPaddle2
+
+		; Move paddle.
+		lda Paddle2X
+		clc
+		adc #$05
+		sta Paddle2X
+
+		; Draw paddle.
+		lda #$C0
+		sta Paddle2Color
+		jsr DrawPaddle2
+
+DontMovePaddle2
+
 		jmp MainLoop
 
 
@@ -844,6 +895,8 @@ YLoopPaddle1
 
 
 DrawPaddle2
+		sei
+
 		; digitalWrite(cs, LOW);
 		lda #$40	; CS low.
 		.byte #$1C ; trb - clear bit
@@ -909,6 +962,7 @@ YLoopPaddle2
 		.byte #$0C ; tsb - set bit
 		.word #$7FF1
 
+		cli
 		rts
 
 
