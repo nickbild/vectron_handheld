@@ -1089,14 +1089,16 @@ BallXDone
 
 		; Is ball touching paddle2?
 		lda BallX
+		clc
+		adc #$03
 		cmp Paddle2X
-		bcc NotTouchingPaddle2 ; if BallX < Paddle2X
+		bcc NotTouchingPaddle2 ; if BallX+3 < Paddle2X
 
 		lda Paddle2X
 		clc
 		adc #$13
 		cmp BallX
-		bcc NotTouchingPaddle2 ; if Paddle2X < BallX
+		bcc NotTouchingPaddle2 ; if Paddle2X+19 < BallX
 		; Ball is touching paddle.
 		jmp IsTouchingPaddle2
 
