@@ -201,4 +201,15 @@ F 3 "" H 25900 3050 60  0000 C CNN
 	1    25900 3050
 	1    0    0    -1  
 $EndComp
+$Comp
+L Connector:Conn_01x10_Female J?
+U 1 1 5F722EEB
+P 23650 17350
+F 0 "J?" H 23678 17326 50  0000 L CNN
+F 1 "Display" H 23678 17235 50  0000 L CNN
+F 2 "" H 23650 17350 50  0001 C CNN
+F 3 "~" H 23650 17350 50  0001 C CNN
+	1    23650 17350
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
