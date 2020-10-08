@@ -10,7 +10,7 @@ I have developed an [implementation of Pong](https://github.com/nickbild/vectron
 
 The KiCad design files are [available here](https://github.com/nickbild/vectron_handheld/tree/master/vectron_handheld_pcb).
 
-The W65C02 is clocked at 8MHz.  The console has 32KB of RAM and 32KB of ROM is available to store the game.  A few 7400-series logic chips are used for address decoding and button debouncing.  All components are through-hole, and aside from the modern display, the components are contemporaries of the original 6502 processor.
+The W65C02 is clocked at 8MHz.  The console has 32KB of RAM, and 32KB of ROM is available to store the game.  A few 7400-series logic chips are used for address decoding and button debouncing.  All components are through-hole, and aside from the modern display, the components are contemporaries of the original 6502 processor.
 
 A W65C22 VIA is used to extend the number of interrupts available to the CPU for capturing button presses.  The VIA is also used to bit bang the SPI TFT LCD display interface.  My implementation of [Pong](https://github.com/nickbild/vectron_handheld/blob/master/game.asm) demonstrates how to use the buttons and the display in a game.
 
@@ -34,6 +34,7 @@ The breadboard prototype from which the PCB was designed:
 ![prototype](https://raw.githubusercontent.com/nickbild/vectron_handheld/master/media/finished_prototype.jpg)
 
 Playing Pong:
+![pong](https://raw.githubusercontent.com/nickbild/vectron_handheld/master/media/pong.png)
 
 Unpopulated PCB:
 ![bare pcb](https://raw.githubusercontent.com/nickbild/vectron_handheld/master/media/pcb_bare_sm.jpg)
