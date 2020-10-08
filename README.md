@@ -23,6 +23,10 @@ The Vectron Handheld runs at 5V and draws ~150 mA of current.
 YouTube:
 
 Vectron Handheld:
+![pcb](https://raw.githubusercontent.com/nickbild/vectron_handheld/master/media/pcb_full_sm.jpg)
+
+Close-up:
+![closeup](https://raw.githubusercontent.com/nickbild/vectron_handheld/master/media/pcb_closeup_sm.jpg)
 
 The breadboard prototype from which the PCB was designed:
 ![prototype](https://raw.githubusercontent.com/nickbild/vectron_handheld/master/media/finished_prototype.jpg)
@@ -49,6 +53,8 @@ Unpopulated PCB:
 - 1	x 1.8" 128x160 18-bit color TFT LCD display
 - 1	x 220uF capacitor
 - 5	x 1,000 pF capacitor
+- 2 x 40 pin DIP IC socket
+- 2 x 28 pin DIP IC socket
 
 ## Also See
 
