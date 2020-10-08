@@ -1,10 +1,12 @@
 # Vectron Handheld
 
-Coming Soon!
-
 Vectron Handheld is a retro handheld gaming console based on the [6502 CPU](https://en.wikipedia.org/wiki/MOS_Technology_6502).  It has five input buttons (up, down, left, right, fire) and a 1.8" 128x160 18-bit color TFT LCD display.  
 
 I have developed an [implementation of Pong](https://github.com/nickbild/vectron_handheld/blob/master/game.asm) to demonstrate Vectron Handheld's capabilities.
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/nickbild/vectron_handheld/master/media/vectron_handheld.gif">
+</p>
 
 ## How It Works
 
@@ -22,7 +24,8 @@ The Vectron Handheld runs at 5V and draws ~150 mA of current.
 
 ## Media
 
-YouTube:
+YouTube:  
+https://www.youtube.com/watch?v=bRN5SaRVa04
 
 Vectron Handheld:
 ![pcb](https://raw.githubusercontent.com/nickbild/vectron_handheld/master/media/pcb_full_sm.jpg)
