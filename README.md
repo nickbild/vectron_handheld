@@ -18,7 +18,7 @@ A 273 mm x 221 mm 4-layer PCB was designed in KiCad.  There is definitely opport
 
 The Vectron Handheld runs at 5V and draws ~150 mA of current.
 
-![schematic](https://raw.githubusercontent.com/nickbild/vectron_handheld/master/media/vectron_handheld_pcb.jpg)
+![schematic](https://raw.githubusercontent.com/nickbild/vectron_handheld/master/media/vectron_handheld_pcb.svg)
 
 ## Media
 
