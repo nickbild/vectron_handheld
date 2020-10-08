@@ -36,6 +36,7 @@ The breadboard prototype from which the PCB was designed:
 Playing Pong:
 
 Unpopulated PCB:
+![bare pcb](https://raw.githubusercontent.com/nickbild/vectron_handheld/master/media/pcb_bare_sm.jpg)
 
 ## Bill of Materials
 
