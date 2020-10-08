@@ -1,4 +1,5 @@
 *.out
 *.list
 hex.txt
+.DS_Store
 
